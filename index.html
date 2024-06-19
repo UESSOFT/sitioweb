@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practicando las Tablas de Multiplicar</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        .tabla {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+
+        .tabla h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #007bff;
+        }
+
+        .tabla ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .tabla label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .tabla input[type="number"] {
+            margin: 10px;
+            padding: 8px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 60px;
+        }
+
+        .tabla button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-size: 16px;
+        }
+
+        .tabla button:hover {
+            background-color: #0056b3;
+        }
+
+        .tabla p {
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Practicando las Tablas de Multiplicar</h1>
+        
+        <!-- Generación de tablas dinámicas con JavaScript -->
+        <div class="tabla" id="tablasContainer">
+            <!-- Aquí se generará dinámicamente las tablas -->
+        </div>
+
+        <!-- Enlace para compartir -->
+        <p>Comparte esta página: <a href="#" id="enlaceCompartir">Compartir</a></p>
+    </div>
+
+    <script>
+        // Definir las tablas de multiplicar del 1 al 10
+        const tablas = [
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // Tabla del 1
+            [2, 4, 6, 8, 10, 12, 14, 16, 18, 20], // Tabla del 2
+            [3, 6, 9, 12, 15, 18, 21, 24, 27, 30], // Tabla del 3
+            [4, 8, 12, 16, 20, 24, 28, 32, 36, 40], // Tabla del 4
+            [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], // Tabla del 5
+            [6, 12, 18, 24, 30, 36, 42, 48, 54, 60], // Tabla del 6
+            [7, 14, 21, 28, 35, 42, 49, 56, 63, 70], // Tabla del 7
+            [8, 16, 24, 32, 40, 48, 56, 64, 72, 80], // Tabla del 8
+            [9, 18, 27, 36, 45, 54, 63, 72, 81, 90], // Tabla del 9
+            [10, 20, 30, 40, 50, 60, 70, 80, 90, 100] // Tabla del 10
+        ];
+
+        // Función para generar la lista de operaciones para cada tabla
+        function generarOperaciones(tabla) {
+            const ul = document.createElement('ul');
+            for (let i = 0; i < 10; i++) {
+                const li = document.createElement('li');
+                li.textContent = `${tabla} x ${i + 1} = `;
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.dataset.resultado = tablas[tabla - 1][i];
+                input.dataset.tabla = tabla;
+                li.appendChild(input);
+                ul.appendChild(li);
+            }
+            return ul;
+        }
+
+        // Función para agregar las tablas al contenedor
+        function agregarTablas() {
+            const tablasContainer = document.getElementById('tablasContainer');
+            tablasContainer.innerHTML = ''; // Limpiar contenido previo
+            for (let i = 1; i <= 10; i++) {
+                const tablaDiv = document.createElement('div');
+                tablaDiv.classList.add('tabla');
+                tablaDiv.innerHTML = `<h2>Tabla del ${i}</h2>`;
+                tablaDiv.appendChild(generarOperaciones(i));
+                const button = document.createElement('button');
+                button.textContent = 'Verificar';
+                button.onclick = function() {
+                    verificarRespuestas(i);
+                };
+                tablaDiv.appendChild(button);
+                const resultado = document.createElement('p');
+                resultado.id = `resultado${i}`;
+                tablaDiv.appendChild(resultado);
+                tablasContainer.appendChild(tablaDiv);
+            }
+        }
+
+        // Función para verificar las respuestas ingresadas por el usuario
+        function verificarRespuestas(tabla) {
+            const lis = document.querySelectorAll(`#tablasContainer .tabla:nth-child(${tabla}) li`);
+            let todasCorrectas = true;
+
+            lis.forEach(li => {
+                const input = li.querySelector('input');
+                const respuesta = parseInt(input.value);
+                const resultado = parseInt(input.dataset.resultado);
+
+                if (respuesta === resultado) {
+                    li.style.color = "green";
+                    todasCorrectas = todasCorrectas && true;
+                } else {
+                    li.style.color = "red";
+                    todasCorrectas = false;
+                }
+            });
+
+            const mensaje = document.getElementById(`resultado${tabla}`);
+            if (todasCorrectas) {
+                mensaje.textContent = "¡Todas las respuestas son correctas!";
+                mensaje.style.color = "green";
+            } else {
+                mensaje.textContent = "Algunas respuestas son incorrectas. Intenta de nuevo.";
+                mensaje.style.color = "red";
+            }
+        }
+
+        // Generar las tablas al cargar la página
+        window.onload = function() {
+            agregarTablas();
+        };
+
+        // Generar el enlace para compartir
+        const enlaceCompartir = document.getElementById('enlaceCompartir');
+        enlaceCompartir.href = window.location.href;
+        enlaceCompartir.textContent = `Compartir la página de las Tablas de Multiplicar`;
+    </script>
+
+    <!-- Información general -->
+    <div class="footer">
+        <p>&copy; 2024 Universidad de El Salvador - Practicando las Tablas de Multiplicar</p>
+    </div>
+</body>
+</html>
